@@ -40,20 +40,29 @@ const CustomCursor = () => {
 
   return (
     <>
-      {/* Dot */}
+      {/* Central Spark (Dot) */}
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-primary z-[10000] pointer-events-none"
-        animate={{ x: pos.x - 4, y: pos.y - 4, scale: hovering ? 1.5 : 1 }}
+        className="fixed top-0 left-0 w-2 h-2 rounded-full z-[10000] pointer-events-none"
+        style={{ backgroundColor: "#ffb400" }} // Hardcoded Labib Amber
+        animate={{ 
+          x: pos.x - 4, 
+          y: pos.y - 4, 
+          scale: hovering ? 1.5 : 1,
+          boxShadow: hovering ? "0 0 15px #ffb400" : "0 0 0px transparent"
+        }}
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
       />
-      {/* Ring */}
+      
+      {/* Outer Glow Ring */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-primary/50 z-[10000] pointer-events-none"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border z-[10000] pointer-events-none"
         animate={{
           x: pos.x - 16,
           y: pos.y - 16,
           scale: hovering ? 1.8 : 1,
-          borderColor: hovering ? "hsl(44 53% 54% / 0.8)" : "hsl(44 53% 54% / 0.3)",
+          // Shifted HSL to Toasted Amber (approx 38-45 range)
+          borderColor: hovering ? "hsla(38, 100%, 50%, 0.8)" : "hsla(38, 100%, 50%, 0.2)",
+          backgroundColor: hovering ? "hsla(38, 100%, 50%, 0.05)" : "transparent",
         }}
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
       />

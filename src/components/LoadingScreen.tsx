@@ -17,26 +17,13 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     const W = canvas.width;
     const H = canvas.height;
 
-    const LETTERS = ["C", "U", "R", "F", "E", "W"];
-    const LETTER_INTERVAL = 350;
-    const INITIAL_DELAY = 400;
-    const FONT_SIZE = Math.min(W * 0.12, 120);
+    // The Labib's text sequence
+    const LETTERS = ["L", "A", "B", "I", "B", "'", "S"];
+    const LETTER_INTERVAL = 120; // Fast, snappy sequence
+    const INITIAL_DELAY = 300;
+    const FONT_SIZE = Math.min(W * 0.12, 140);
     const CENTER_Y = H * 0.45;
 
-    const AQUA_NEON = ["#00f0ff", "#00d4ff", "#00ffff", "#7df9ff", "#ffffff"];
-
-    interface Bubble {
-      x: number; y: number; vx: number; vy: number;
-      size: number; opacity: number; wobble: number;
-    }
-
-    interface Ripple {
-      x: number; y: number; r: number; opacity: number;
-    }
-
-    let bubbles: Bubble[] = [];
-    let ripples: Ripple[] = [];
-    let revealedLetters = 0;
     let fadeOutStart = -1;
     let startTime = -1;
     let animId: number;
@@ -47,49 +34,46 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       ctx.font = `bold ${FONT_SIZE}px "Cormorant Garamond", serif`;
       ctx.textAlign = "left";
       const widths = LETTERS.map((l) => ctx.measureText(l).width);
-      const gap = FONT_SIZE * 0.08;
+      const gap = FONT_SIZE * 0.05; // Tighter kerning for a premium look
       const totalW = widths.reduce((a, b) => a + b, 0) + gap * (LETTERS.length - 1);
       let curX = (W - totalW) / 2;
+      
       LETTERS.forEach((_, i) => {
         letterPos.push({ x: curX, cx: curX + widths[i] / 2, y: CENTER_Y, w: widths[i] });
         curX += widths[i] + gap;
       });
     };
 
-    const spawnRipple = (cx: number, cy: number) => {
-      ripples.push({ x: cx, y: cy, r: 0, opacity: 0.6 });
-    };
-
-    const spawnBubbles = (cx: number, cy: number) => {
-      for (let i = 0; i < 15; i++) {
-        bubbles.push({
-          x: cx + (Math.random() - 0.5) * 40,
-          y: cy + (Math.random() - 0.5) * 20,
-          vx: (Math.random() - 0.5) * 2,
-          vy: -(Math.random() * 3 + 1),
-          size: Math.random() * 6 + 2,
-          opacity: Math.random() * 0.5 + 0.5,
-          wobble: Math.random() * Math.PI * 2,
-        });
-      }
-    };
-
     const drawLetter = (letter: string, pos: { x: number; cx: number; y: number }, elapsed: number, idx: number) => {
-      const wave = Math.sin(elapsed * 0.003 + idx * 0.8) * 5;
+      const letterStartTime = INITIAL_DELAY + idx * LETTER_INTERVAL;
+      if (elapsed < letterStartTime) return;
+
+      // Calculate animation progress (0 to 1) over 600ms
+      const progress = Math.min(1, (elapsed - letterStartTime) / 600);
       
+      // Smooth ease-out cubic curve
+      const ease = 1 - Math.pow(1 - progress, 3);
+      
+      // Slide up from 20px below
+      const yOffset = 20 * (1 - ease);
+
       ctx.save();
+      ctx.globalAlpha = progress;
       ctx.font = `bold ${FONT_SIZE}px "Cormorant Garamond", serif`;
       ctx.textBaseline = "middle";
-      ctx.shadowBlur = 25;
-      ctx.shadowColor = "rgba(0, 240, 255, 0.5)";
+      
+      // Subtle heat glow
+      ctx.shadowBlur = 20 * ease;
+      ctx.shadowColor = "rgba(255, 140, 0, 0.4)"; // Amber glow
 
-      const grad = ctx.createLinearGradient(pos.x, pos.y - 50, pos.x, pos.y + 50);
-      grad.addColorStop(0, "#ffffff");
-      grad.addColorStop(0.5, "#00f0ff");
-      grad.addColorStop(1, "#0055ff");
+      // Premium Fire Orange to Gold gradient
+      const grad = ctx.createLinearGradient(pos.x, pos.y - FONT_SIZE/2, pos.x, pos.y + FONT_SIZE/2);
+      grad.addColorStop(0, "#ffd700"); // Gold top
+      grad.addColorStop(0.5, "#ffb400"); // Amber middle
+      grad.addColorStop(1, "#ff4500"); // Fire orange bottom
 
       ctx.fillStyle = grad;
-      ctx.fillText(letter, pos.x, pos.y + wave);
+      ctx.fillText(letter, pos.x, pos.y + yOffset);
       ctx.restore();
     };
 
@@ -97,80 +81,63 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       if (startTime === -1) startTime = now;
       const elapsed = now - startTime;
 
-      ctx.fillStyle = "#020813";
+      // Solid Charcoal Background
+      ctx.fillStyle = "#050505";
       ctx.fillRect(0, 0, W, H);
 
-      // --- LOGIC: REVEAL ---
-      const target = elapsed < INITIAL_DELAY ? 0 : Math.min(LETTERS.length, Math.floor((elapsed - INITIAL_DELAY) / LETTER_INTERVAL) + 1);
-
-      if (target > revealedLetters) {
-        for (let i = revealedLetters; i < target; i++) {
-          if (letterPos[i]) {
-            spawnRipple(letterPos[i].cx, letterPos[i].y);
-            spawnBubbles(letterPos[i].cx, letterPos[i].y);
-          }
-        }
-        revealedLetters = target;
-      }
-
-      // --- DRAW: RIPPLES ---
-      ripples.forEach((r, i) => {
-        r.r += 4;
-        r.opacity -= 0.008;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 240, 255, ${r.opacity})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      });
-      ripples = ripples.filter(r => r.opacity > 0);
-
       // --- DRAW: LETTERS ---
-      for (let i = 0; i < revealedLetters; i++) {
+      for (let i = 0; i < LETTERS.length; i++) {
         drawLetter(LETTERS[i], letterPos[i], elapsed, i);
       }
 
-      // --- DRAW: BUBBLES ---
-      bubbles.forEach((b) => {
-        b.y += b.vy;
-        b.x += Math.sin(elapsed * 0.01 + b.wobble) * 0.5;
-        b.opacity -= 0.005;
-        
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(125, 249, 255, ${b.opacity})`;
-        ctx.fill();
-        ctx.strokeStyle = `rgba(255, 255, 255, ${b.opacity * 0.5})`;
-        ctx.stroke();
-      });
-      bubbles = bubbles.filter(b => b.opacity > 0);
-
-      // --- SUBTEXTS ---
-      const allDoneAt = INITIAL_DELAY + LETTERS.length * LETTER_INTERVAL + 200;
+      // --- DRAW: EXPANDING LINE & SUBTEXTS ---
+      const allDoneAt = INITIAL_DELAY + LETTERS.length * LETTER_INTERVAL + 400;
       if (elapsed > allDoneAt) {
         const p = Math.min(1, (elapsed - allDoneAt) / 800);
-        ctx.globalAlpha = p;
-        ctx.font = `300 ${Math.max(14, FONT_SIZE * 0.2)}px Montserrat, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#00f0ff";
-        ctx.letterSpacing = "10px";
-        ctx.fillText("C A F É", W / 2, CENTER_Y + FONT_SIZE * 0.7);
+        const easeLine = 1 - Math.pow(1 - p, 4);
+
+        // Draw expanding amber line
+        const totalWidth = letterPos[letterPos.length - 1].cx - letterPos[0].cx + letterPos[letterPos.length - 1].w;
+        const lineWidth = totalWidth * easeLine;
+        const lineY = CENTER_Y + FONT_SIZE * 0.6;
         
-        ctx.font = `italic 10px Montserrat, sans-serif`;
-        ctx.fillText("COZY CHILL · NEON NIGHTS", W / 2, CENTER_Y + FONT_SIZE * 1.1);
-        ctx.globalAlpha = 1;
+        ctx.save();
+        ctx.globalAlpha = easeLine;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#ffb400";
+        ctx.fillStyle = "rgba(255, 180, 0, 0.6)";
+        ctx.fillRect((W - lineWidth) / 2, lineY, lineWidth, 2);
+        ctx.restore();
+
+        // Draw Subtext
+        ctx.save();
+        ctx.globalAlpha = p;
+        ctx.font = `600 ${Math.max(12, FONT_SIZE * 0.12)}px Montserrat, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffb400"; // Amber text
+        ctx.letterSpacing = "8px";
+        ctx.fillText("EST. 2012", W / 2, lineY + FONT_SIZE * 0.3);
+        
+        ctx.globalAlpha = p * 0.6;
+        ctx.font = `400 ${Math.max(10, FONT_SIZE * 0.08)}px Montserrat, sans-serif`;
+        ctx.letterSpacing = "6px";
+        ctx.fillText("THE HEART OF KAMLA NAGAR", W / 2, lineY + FONT_SIZE * 0.55);
+        ctx.restore();
       }
 
       // --- EXIT ---
-      if (elapsed > allDoneAt + 2500 && fadeOutStart === -1) fadeOutStart = elapsed;
+      // Hold the fully revealed screen for a bit, then fade out
+      if (elapsed > allDoneAt + 1800 && fadeOutStart === -1) fadeOutStart = elapsed;
       if (fadeOutStart !== -1) {
-        const fp = Math.min(1, (elapsed - fadeOutStart) / 800);
-        ctx.fillStyle = `rgba(2, 8, 19, ${fp})`;
+        const fp = Math.min(1, (elapsed - fadeOutStart) / 600);
+        // Paint a black overlay fading in to hide everything
+        ctx.fillStyle = `rgba(5, 5, 5, ${fp})`;
         ctx.fillRect(0, 0, W, H);
+        
         if (fp >= 1 && !doneRef.current) {
           doneRef.current = true;
           setExit(true);
-          setTimeout(() => onComplete(), 500);
+          setTimeout(() => onComplete(), 300); // Shorter delay for a snappy transition
           return;
         }
       }
@@ -190,9 +157,9 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     <AnimatePresence>
       {!exit && (
         <motion.div
-          exit={{ opacity: 0, scale: 1.1 }}
-          transition={{ duration: 1, ease: "circOut" }}
-          className="fixed inset-0 z-[9999] bg-[#020813] overflow-hidden"
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.8, ease: "circOut" }}
+          className="fixed inset-0 z-[9999] bg-[#050505] overflow-hidden flex items-center justify-center"
         >
           <canvas ref={canvasRef} className="w-full h-full" />
         </motion.div>

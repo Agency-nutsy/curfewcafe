@@ -4,50 +4,52 @@
 
 @layer base {
   :root {
-    /* --- CURFEW AQUA TYPOGRAPHY & COLOR PALETTE --- */
-    --background: 218 81% 4%; /* #020813 */
-    --foreground: 210 40% 98%; /* Icy white */
-    --card: 218 81% 6%;
-    --card-foreground: 210 40% 98%;
-    --popover: 218 81% 6%;
-    --popover-foreground: 210 40% 98%;
+    /* --- LABIB'S AMBER & CHARCOAL PALETTE --- */
+    --background: 0 0% 2%; /* #050505 - Rich Charcoal */
+    --foreground: 0 0% 98%; /* Crisp White */
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
     
-    /* The main glowing neon cyan accent */
-    --primary: 184 100% 50%; /* #00f0ff */
-    --primary-foreground: 218 81% 4%;
+    /* The main Labib's Amber accent (#ffb400) */
+    --primary: 42 100% 50%; 
+    --primary-foreground: 0 0% 2%;
     
-    --secondary: 220 100% 12%; 
-    --secondary-foreground: 210 40% 98%;
+    /* Fire Orange secondary accent (#ff4500) */
+    --secondary: 16 100% 64%; 
+    --secondary-foreground: 0 0% 98%;
     
-    --muted: 218 60% 10%;
-    --muted-foreground: 215 20% 65%; 
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 65%; 
     
-    --accent: 220 100% 50%; /* Deep ocean blue */
-    --accent-foreground: 210 40% 98%;
+    --accent: 16 100% 64%; /* Fire Orange */
+    --accent-foreground: 0 0% 98%;
     
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 218 70% 15%; 
-    --input: 218 60% 8%;
-    --ring: 184 100% 50%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 12%; /* Faint charcoal border */
+    --input: 0 0% 8%;
+    --ring: 42 100% 50%; /* Amber ring */
     --radius: 0.25rem;
     
-    /* Adjusted custom vars */
-    --cyan: 184 100% 50%;
-    --cyan-light: 184 100% 75%;
-    --ocean-blue: 220 100% 50%;
-    --navy: 220 100% 20%;
-    --icy-white: 210 40% 98%;
+    /* Custom brand vars */
+    --amber: 42 100% 50%;
+    --amber-light: 42 100% 70%;
+    --fire-orange: 16 100% 64%;
+    --charcoal: 0 0% 2%;
+    --crisp-white: 0 0% 98%;
     
-    /* Sidebar matching the aqua vibe */
-    --sidebar-background: 218 81% 4%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 184 100% 50%;
-    --sidebar-primary-foreground: 218 81% 4%;
-    --sidebar-accent: 220 100% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 218 70% 15%;
-    --sidebar-ring: 184 100% 50%;
+    /* Sidebar matching the charcoal vibe */
+    --sidebar-background: 0 0% 2%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 42 100% 50%;
+    --sidebar-primary-foreground: 0 0% 2%;
+    --sidebar-accent: 16 100% 64%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 42 100% 50%;
   }
 }
 
@@ -58,35 +60,27 @@
   body {
     @apply text-foreground;
     font-family: 'Montserrat', sans-serif;
-    cursor: none;
+    cursor: none; /* Custom Amber cursor takes over */
 
-    /* --- THE UNMISSABLE AQUA BACKGROUND --- */
-    background-color: #020813;
+    /* --- THE SOLID LABIB'S BACKGROUND (100% BUBBLE-FREE) --- */
+    background-color: #050505;
     background-image: 
-      radial-gradient(circle at 20% 40%, rgba(0, 240, 255, 0.15), transparent 55%),
-      radial-gradient(circle at 80% 60%, rgba(0, 85, 255, 0.2), transparent 55%),
-      radial-gradient(circle at 50% 90%, rgba(0, 200, 200, 0.1), transparent 65%);
+      radial-gradient(circle at 15% 50%, rgba(255, 140, 0, 0.04), transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.02), transparent 50%);
     background-attachment: fixed;
-    background-size: 200% 200%;
-    animation: aquaBreath 12s ease-in-out infinite alternate;
+    background-size: 100% 100%;
+    /* All animations removed for a clean, static, high-end look */
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
   }
 }
 
-/* Global Aqua Breath Animation */
-@keyframes aquaBreath {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 50% 100%; }
-}
-
-/* Custom scrollbar - Updated to aqua tones */
+/* Custom scrollbar - Updated to Amber tones */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: hsl(218 81% 4%); }
-::-webkit-scrollbar-thumb { background: hsl(184 100% 50% / 0.5); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: hsl(184 100% 50% / 0.8); }
+::-webkit-scrollbar-track { background: hsl(0 0% 2%); }
+::-webkit-scrollbar-thumb { background: hsl(42 100% 50% / 0.5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(42 100% 50% / 0.8); }
 
 /* Shimmer animation */
 @keyframes shimmer {
@@ -94,17 +88,17 @@
   100% { background-position:  200% center; }
 }
 
-/* Flowing, glowing aqua text */
+/* Flowing, glowing Amber text */
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    hsl(220 100% 50%)  0%,   
-    hsl(184 100% 50%)  18%,  
-    hsl(159 100% 50%)  36%,  
-    hsl(184 100% 75%)  50%,  
-    hsl(159 100% 50%)  64%,  
-    hsl(184 100% 50%)  82%,  
-    hsl(220 100% 50%) 100%   
+    hsl(16 100% 64%)  0%,   /* Fire Orange */
+    hsl(42 100% 50%)  18%,  /* Amber */
+    hsl(50 100% 50%)  36%,  /* Gold */
+    hsl(42 100% 70%)  50%,  /* Light Amber */
+    hsl(50 100% 50%)  64%,  /* Gold */
+    hsl(42 100% 50%)  82%,  /* Amber */
+    hsl(16 100% 64%) 100%   /* Fire Orange */
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -119,31 +113,33 @@
   100% { left:  200%; }
 }
 
-/* Premium aqua button */
-.btn-aqua {
+/* Premium Labib's button (Replaces btn-aqua) */
+.btn-labibs {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, hsl(184 100% 50%), hsl(220 100% 40%));
-  color: hsl(218 81% 4%); 
+  background: linear-gradient(135deg, hsl(16 100% 64%), hsl(42 100% 50%)); /* Orange to Amber */
+  color: hsl(0 0% 98%); /* Crisp White text */
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
 }
-.btn-aqua::after {
+.btn-labibs::after {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, hsl(184 100% 75% / 0.4), transparent);
+  background: linear-gradient(90deg, transparent, hsl(42 100% 70% / 0.4), transparent);
   transition: none;
 }
-.btn-aqua:hover::after {
+.btn-labibs:hover::after {
   animation: btn-shimmer 0.6s ease-out;
 }
-.btn-aqua:hover {
-  box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+.btn-labibs:hover {
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
 }
 
 /* Premium Texture Overlay */
@@ -152,7 +148,7 @@
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.15; 
+  opacity: 0.12; 
   mix-blend-mode: overlay; 
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-repeat: repeat;
